@@ -1,0 +1,16 @@
+{
+	"SolutionName": "MySolution",
+	"BasePath": "Output",
+	"ProjectsFolder": "src",
+	"TestsProjectFolder": "tests",
+	"Framework": "net5",
+	"Language": "C#",
+	"Files": [
+		"iac_templates\\basic\\parameters_dev.json",
+		"iac_templates\\basic\\parameters_test.json",
+		"iac_templates\\basic\\parameters_abn.json",
+		"iac_templates\\basic\\parameters_prod.json",
+		"iac_templates\\basic\\template.json",
+		"migration_sql_scripts\\migrationScript.json"
+    ]
+}

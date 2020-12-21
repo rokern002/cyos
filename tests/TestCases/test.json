@@ -1,0 +1,56 @@
+{
+	"SolutionName": "MySolution",
+	"BasePath": "a:\\test",
+	"ProjectsFolder": "src",
+	"TestsProjectFolder": "tests",
+	"Framework": "net5",
+	"Language": "C#",
+	"Files": [
+		"iac_templates\\basic\\parameters_dev.json",
+		"iac_templates\\basic\\parameters_test.json",
+		"iac_templates\\basic\\parameters_abn.json",
+		"iac_templates\\basic\\parameters_prod.json",
+		"iac_templates\\basic\\template.json",
+		"migration_sql_scripts\\migrationScript.json"
+	],
+	"Projects": [
+		{
+			"Name": "AADApi",
+			"Type": "webapi",
+			"Framework": "net5",
+			"TestProjectType": "xunit",
+			"Files" : null,
+			"NugetPackages": null,
+			"AzureAdB2C": null,
+			"AzureAD": {
+				"Instance": "https://my.b2clogin.com/tfp",
+				"ClientId": "11111111-1111-1111-1111-111111111111",
+				"Domain": "my.onmicrosoft.com",
+				"TenantId": "11111111-1111-1111-1111-111111111111"				
+			}
+		},{
+			"Name": "AADB2CApi",
+			"Type": "webapi",
+			"Framework": "net5",
+			"TestProjectType": "xunit",
+			"Files" : null,
+			"NugetPackages": null,
+			"AzureAdB2C": {
+				"Instance": "https://my.b2clogin.com/tfp",
+				"ClientId": "11111111-1111-1111-1111-111111111111",
+				"Domain": "my.onmicrosoft.com",
+				"SignUpSignInPolicyId": "SUSIP"
+			},
+			"AzureAD": null
+		}, {
+			"Name": "Application",
+			"Type": "classlib",
+			"Framework": "net5",
+			"TestProjectType": "xunit",
+			"Files" : null,
+			"NugetPackages": null,
+			"AzureAdB2C": null,
+			"AzureAD": null
+		}
+	]
+}
