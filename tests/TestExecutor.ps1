@@ -1,26 +1,30 @@
-
-class Process
-{
-    [string] $SolutionName
-    [string] $BasePath
-    [string] $Framework
-    [string] $Language
-    [string] $ProjectsFolder
-    [string] $TestsProjectFolder
-    [object[]] $Files
-    [object[]] $Projects
-}
+param(
+    [Parameter]
+    [string]
+    $TestFile
+)
 
 try{
-    $definitions = Get-ChildItem -r TestCases/*.json 
+    $executeDir = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent    
+    Set-Location -Path $executeDir
+
+    $searchPattern = "TestCases/*.json"
+    if($null -ne $TestFile){
+        $searchPattern = "TestCases/" + $TestFile
+    }
+
+
+    $definitions = Get-ChildItem -r $searchPattern
+        
+    Set-Location -Path (Split-Path -Path $executeDir -Parent)
 
     foreach($item in $definitions){
-        $definition = [Process](Get-Content $item | ConvertFrom-Json)
-        & ..\src\init.ps1 -DefinitionFile $item
+        $definition = Get-Content $item | ConvertFrom-Json -ErrorAction SilentlyContinue
+        & src\init.ps1 -DefinitionFile $item.FullName
 
         Remove-Item -Path $definition.BasePath -Recurse
     }
 }
 catch{
-    Write-Output $_
+    Write-Error $_
 }

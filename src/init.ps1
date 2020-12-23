@@ -27,7 +27,7 @@ class AzureAD : ActiveDirectory
 
 class Project
 {
-    [string] $Path
+    [string] $Name
     [string] $Type
     [string] $Framework
     [string] $Language
@@ -51,7 +51,8 @@ class Process
 }
 try {
     
-    $definition = [Process](Get-Content $DefinitionFile | ConvertFrom-Json)
+    $definition = (Get-Content $DefinitionFile | ConvertFrom-Json)
+    $definition = [Process]$definition
 
     $globalJson =
     ("{`r" +
@@ -99,10 +100,10 @@ try {
             dotnet new $i.Type -lang $language -o $projectPath -f $i.Framework --force
         }
         
-        if([string]::IsNullOrEmpty($i.TestProjectType)){
+        if(![string]::IsNullOrEmpty($i.TestProjectType)){
             $testPath = Join-Path -Path $definition.TestsProjectFolder -ChildPath ($i.Name + "Tests")
-            dotnet new $i.TestProjectType -lang $language -o $testPath -f $i.Framework --force
-            dotnet add ($projectPath + "/" + $i.Name) reference ($testPath + "/" + $i.Name + "Tests")
+            $testProj = dotnet new $i.TestProjectType -lang $language -o $testPath -f $i.Framework --force
+            dotnet add ($projectPath + "\" + $i.Name + ".csproj") reference ($testPath + "\" + $i.Name + "Tests.csproj")
         }
     }
 
@@ -116,5 +117,5 @@ try {
     }
 }
 catch {
-    Write-Output $_
+    Write-Error $_
 }
