@@ -8,6 +8,17 @@ if(!(Test-Path $DefinitionFile -PathType Leaf)){
     Throw "json defintion file do not exists"
 }
 
+function Get-Project-Extension {
+    param (
+        [string] $language
+    )
+    switch -Exact ($language) {
+        "C#" { return ".csproj" }
+        "F#" { return ".fsproj" }
+        Default { Throw "Language (" + $language + ") is not supported" }
+    }
+}
+
 class ActiveDirectory
 {
     [string] $Instance
@@ -86,6 +97,8 @@ try {
             $language = $i.Language
         }
 
+        $projectExtension = Get-Project-Extension $language
+
         $projectPath = Join-Path -Path $definition.ProjectsFolder -ChildPath $i.Name
 
         if($null -ne $i.AzureAD){
@@ -102,13 +115,16 @@ try {
         
         if(![string]::IsNullOrEmpty($i.TestProjectType)){
             $testPath = Join-Path -Path $definition.TestsProjectFolder -ChildPath ($i.Name + "Tests")
-            $testProj = dotnet new $i.TestProjectType -lang $language -o $testPath -f $i.Framework --force
-            dotnet add ($projectPath + "\" + $i.Name + ".csproj") reference ($testPath + "\" + $i.Name + "Tests.csproj")
+            dotnet new $i.TestProjectType -lang $language -o $testPath -f $i.Framework --force
+            dotnet add ($testPath + "\" + $i.Name + "Tests" + $projectExtension) reference ($projectPath + "\" + $i.Name + $projectExtension)
         }
     }
 
     dotnet new sln -n ($definition.SolutionName) --force
-    dotnet sln ($definition.SolutionName + ".sln") add (Get-ChildItem -r **/*.csproj)
+    $projectFiles = Get-ChildItem -r **/*.*proj
+    if($projectFiles.Length -gt 0){
+        dotnet sln ($definition.SolutionName + ".sln") add $projectFiles
+    }
 
     if($null -ne $definition.Files){
         foreach($path in $definition.Files){
