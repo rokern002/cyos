@@ -71,9 +71,9 @@ try {
     }
 
     if(!(Test-Path $definition.BasePath)){
-        New-Item $definition.BasePath -PathType Directory
+        New-Item $definition.BasePath -ItemType Directory -Force
     }
-
+    Push-Location
     Set-Location -Path $definition.BasePath
 
     $globalJson | Set-Content "global.json"
@@ -107,15 +107,19 @@ try {
         }
     }
 
-    dotnet new sln -n ($definition.SolutionName)
+    dotnet new sln -n ($definition.SolutionName) --force
     dotnet sln ($definition.SolutionName + ".sln") add (Get-ChildItem -r **/*.csproj)
 
     if($null -ne $definition.Files){
         foreach($path in $definition.Files){
-            New-Item $path -PathType File
+            New-Item $path -ItemType File -Force
         }
     }
 }
 catch {
     Write-Error $_
+}
+finally
+{
+    Pop-Location
 }

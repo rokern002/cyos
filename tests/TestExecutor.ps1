@@ -15,7 +15,6 @@ try{
 
 
     $definitions = Get-ChildItem -r $searchPattern
-        
     Set-Location -Path (Split-Path -Path $executeDir -Parent)
 
     foreach($item in $definitions){
